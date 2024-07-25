@@ -8,8 +8,8 @@ setup(
     version="0.0.1",
     packages=find_packages(),
     install_requires=[
-        "ccxt==1.60.0",
-        "lightgbm==3.2.1",
+        "ccxt==4.3.67",
+        "lightgbm==4.4.0",
         "TA-Lib==0.4.21"
     ]
 )
