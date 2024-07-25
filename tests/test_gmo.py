@@ -21,6 +21,7 @@ class TestGmo(TestCase):
 
         df = fetcher.fetch_ohlcv(market='XLM', interval_sec=300)
         print(df)
+        print(df.head())
         print(df.dtypes)
 
         self.assertEqual(df.index[0], pd.to_datetime('2021-08-18 07:10:00+00:00', utc=True))
