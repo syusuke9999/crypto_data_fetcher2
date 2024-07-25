@@ -1,7 +1,7 @@
+import datetime
 import time
 import numpy as np
 import pandas as pd
-import datetime
 import urllib.request
 import urllib.error
 from .utils import create_null_logger
@@ -69,10 +69,11 @@ class GmoFetcher:
                 date.year,
                 date.month,
                 date.day,
-                market
+                market,
             )
-            self.logger.debug(url)
+            self.logger.debug(f"Accessing URL: {url}")
             df = self._url_read_csv(url)
+
             if df is not None:
                 if interval_sec is not None:
                     df['timestamp'] = df['timestamp'].dt.floor('{}S'.format(interval_sec))
@@ -83,10 +84,13 @@ class GmoFetcher:
                         df.groupby('timestamp')['price'].nth(-1).rename('cl'),
                         df.groupby('timestamp')['size'].sum().rename('volume'),
                     ], axis=1)
-
                 dfs.append(df)
 
             date += datetime.timedelta(days=1)
+
+        if len(dfs) == 0:
+            self.logger.debug("No data found for the specified period and market.")
+            return pd.DataFrame()  # 空のデータフレームを返す
 
         df = pd.concat(dfs)
 
