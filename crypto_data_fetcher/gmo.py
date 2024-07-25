@@ -3,7 +3,9 @@ import numpy as np
 import pandas as pd
 import datetime
 import urllib.request
+import urllib.error
 from .utils import create_null_logger
+
 
 def url_exists(url):
     try:
@@ -14,6 +16,7 @@ def url_exists(url):
     except urllib.error.HTTPError:
         pass
     return False
+
 
 def url_read_csv(url):
     try:
@@ -30,6 +33,7 @@ def url_read_csv(url):
     except urllib.error.HTTPError:
         pass
     return None
+
 
 class GmoFetcher:
     def __init__(self, logger=None, ccxt_client=None, memory=None):
@@ -60,18 +64,15 @@ class GmoFetcher:
 
         dfs = []
         while date < today:
-            url = 'https://api.coin.z.com/data/trades/{}/{}/{:02}/{}{:02}{:02}_{}.csv.gz'.format(
+            url = 'https://api.coin.z.com/data/trades/{}/{}/{:02}/{:02}_{}.csv.gz'.format(
                 market,
-                date.year,
-                date.month,
                 date.year,
                 date.month,
                 date.day,
-                market,
+                market
             )
             self.logger.debug(url)
             df = self._url_read_csv(url)
-
             if df is not None:
                 if interval_sec is not None:
                     df['timestamp'] = df['timestamp'].dt.floor('{}S'.format(interval_sec))
@@ -112,7 +113,3 @@ class GmoFetcher:
                 break
 
         return start_year, start_month
-
-
-
-

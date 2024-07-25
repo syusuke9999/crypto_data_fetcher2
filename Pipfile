@@ -6,10 +6,13 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-ccxt = "==1.57.43"
+ccxt = ">=4.3.60"
+lightgbm = ">=3.2.1"
+TA-Lib = "*"
 pandas = "*"
 six = "*"
 joblib = "*"
+numpy = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.8"
