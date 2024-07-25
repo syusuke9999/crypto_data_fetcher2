@@ -13,8 +13,10 @@ def url_exists(url):
         res = urllib.request.urlopen(url)
         if res.getcode() == 200:
             return True
-    except urllib.error.HTTPError:
-        pass
+    except urllib.error.HTTPError as e:
+        print(f"HTTPError: {e.code} for URL: {url}")
+    except Exception as e:
+        print(f"Error: {str(e)} for URL: {url}")
     return False
 
 
@@ -22,16 +24,16 @@ def url_read_csv(url):
     try:
         time.sleep(1)
         df = pd.read_csv(url)
-        df = df.rename(columns={
-            'symbol': 'market',
-        })
+        df = df.rename(columns={'symbol': 'market'})
         df['price'] = df['price'].astype('float64')
         df['size'] = df['size'].astype('float64')
         df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True)
         df['side'] = np.where(df['side'] == 'BUY', 1, -1).astype('int8')
         return df
-    except urllib.error.HTTPError:
-        pass
+    except urllib.error.HTTPError as e:
+        print(f"HTTPError: {e.code} for URL: {url}")
+    except Exception as e:
+        print(f"Error: {str(e)} for URL: {url}")
     return None
 
 
@@ -117,4 +119,3 @@ class GmoFetcher:
                 break
 
         return start_year, start_month
-
