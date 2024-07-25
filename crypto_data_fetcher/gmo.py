@@ -117,3 +117,4 @@ class GmoFetcher:
                 break
 
         return start_year, start_month
+
