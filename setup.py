@@ -10,7 +10,6 @@ setup(
     install_requires=[
         "ccxt==4.3.67",
         "lightgbm==4.4.0",
-        "TA-Lib==0.4.21",
         "pandas",
         "numpy",
         "joblib",
