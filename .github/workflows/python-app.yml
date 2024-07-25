@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ '3.6' ]
+        python-version: [ '3.8' ]
         ccxt-version: [ '1.57.43' ]
 
     steps:
