@@ -54,6 +54,11 @@ class GmoFetcher:
             url_read_csv_cached = memory.cache(url_read_csv)
             self._url_read_csv = url_read_csv_cached
 
+    def generate_url(self, year, month, day):
+        date_str = f"{year}{month:02d}{day:02d}"
+        url = f"https://api.coin.z.com/data/trades/{self.market}/{year}/{month:02}/{date_str}_{self.market}.csv.gz"
+        return url
+
     def fetch_ohlcv(self, interval_sec=None, market=None):
         return self.fetch_trades(market=market, interval_sec=interval_sec)
 
