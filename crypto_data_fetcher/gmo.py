@@ -115,3 +115,4 @@ class GmoFetcher:
                             start_day = day
                             return start_year, start_month, start_day
         return start_year, start_month, start_day
+
