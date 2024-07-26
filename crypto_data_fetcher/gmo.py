@@ -6,7 +6,6 @@ import urllib.request
 import urllib.error
 from .utils import create_null_logger
 
-
 def url_exists(url):
     try:
         time.sleep(1)
@@ -18,7 +17,6 @@ def url_exists(url):
     except Exception as e:
         print(f"Error: {str(e)} for URL: {url}")
     return False
-
 
 def url_read_csv(url):
     try:
@@ -37,7 +35,6 @@ def url_read_csv(url):
     except Exception as e:
         print(f"Error: {str(e)} for URL: {url}")
     return None
-
 
 class GmoFetcher:
     def __init__(self, market, logger=None, ccxt_client=None, memory=None):
@@ -63,8 +60,8 @@ class GmoFetcher:
             if 3600 % interval_sec != 0:
                 raise Exception('3600 % interval_sec must be 0')
         today = datetime.datetime.now().date()
-        start_year, start_month = self._find_start_year_month(market)
-        date = datetime.date(start_year, start_month, 1)
+        start_year, start_month, start_day = self._find_start_year_month(market)
+        date = datetime.date(start_year, start_month, start_day)
         dfs = []
         date_range = pd.date_range(start=date, end=today - datetime.timedelta(days=1), freq='D')
         for date in date_range:
@@ -81,14 +78,12 @@ class GmoFetcher:
             df = self._url_read_csv(url)
             if df is not None:
                 if interval_sec is not None:
-                    df['timestamp'] = df['timestamp'].dt.floor('{}S'.format(interval_sec))
-                    df = pd.concat([
-                        df.groupby('timestamp')['price'].nth(0).rename('op'),
-                        df.groupby('timestamp')['price'].max().rename('hi'),
-                        df.groupby('timestamp')['price'].min().rename('lo'),
-                        df.groupby('timestamp')['price'].nth(-1).rename('cl'),
-                        df.groupby('timestamp')['size'].sum().rename('volume'),
-                    ], axis=1)
+                    df['timestamp'] = df['timestamp'].dt.floor(f'{interval_sec}S')
+                    df = df.groupby('timestamp').agg({
+                        'price': ['first', 'max', 'min', 'last'],
+                        'size': 'sum'
+                    })
+                    df.columns = ['op', 'hi', 'lo', 'cl', 'volume']
                 dfs.append(df)
 
         if len(dfs) == 0:
@@ -108,15 +103,13 @@ class GmoFetcher:
         start_month = None
         start_day = None
 
-        # 年と月を探す
         for year in range(2018, today.year + 1):
             for month in range(1, 13):
                 url = f'https://api.coin.z.com/data/trades/{market}/{year}/{month:02}/'
                 if self._url_exists(url):
                     start_year = year
                     start_month = month
-                    # 月が見つかったら、最初の有効な日を探す
-                    for day in range(1, 32):  # 最大で31日まで試す
+                    for day in range(1, 32):
                         test_url = f'https://api.coin.z.com/data/trades/{market}/{year}/{month:02}/{year}{month:02}{day:02}_{market}.csv.gz'
                         if self._url_exists(test_url):
                             start_day = day
