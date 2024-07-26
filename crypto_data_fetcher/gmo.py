@@ -64,7 +64,15 @@ class GmoFetcher:
         dfs = []
         date_range = pd.date_range(start=date, end=today - datetime.timedelta(days=1), freq='D')
         for date in date_range:
-            url = f'https://api.coin.z.com/data/trades/{market}/{date.year}/{date.month:02}/{date.day:02}_{market}.csv.gz'
+            url = 'https://api.coin.z.com/data/trades/{}/{}/{:02}/{}{:02}{:02}_{}.csv.gz'.format(
+                market,
+                date.year,
+                date.month,
+                date.year,
+                date.month,
+                date.day,
+                market,
+            )
             self.logger.debug(f"Accessing URL: {url}")
             df = self._url_read_csv(url)
             if df is not None:
