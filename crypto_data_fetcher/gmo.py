@@ -104,22 +104,21 @@ class GmoFetcher:
 
     def _find_start_year_month(self, market):
         today = datetime.datetime.now().date()
-        start_year: int = 2018
+        start_year = None
+        start_month = None
+        start_day = None
+
+        # 年と月を探す
         for year in range(2018, today.year + 1):
-            url = 'https://api.coin.z.com/data/trades/{}/{}/'.format(market, year)
-            self.logger.debug(f"Checking URL: {url}")
-            if self._url_exists(url):
-                start_year = year
-                break
-        start_month: int = 1
-        if start_year == 2018:
-            start_month = 8
-        else:
-            start_month = 0
-        for month in range(start_month, 13):
-            url = 'https://api.coin.z.com/data/trades/{}/{}/{:02}/'.format(market, start_year, month)
-            self.logger.debug(f"Checking URL: {url}")
-            if self._url_exists(url):
-                start_month = month
-                break
-        return start_year, start_month
+            for month in range(1, 13):
+                url = f'https://api.coin.z.com/data/trades/{market}/{year}/{month:02}/'
+                if self._url_exists(url):
+                    start_year = year
+                    start_month = month
+                    # 月が見つかったら、最初の有効な日を探す
+                    for day in range(1, 32):  # 最大で31日まで試す
+                        test_url = f'https://api.coin.z.com/data/trades/{market}/{year}/{month:02}/{year}{month:02}{day:02}_{market}.csv.gz'
+                        if self._url_exists(test_url):
+                            start_day = day
+                            return start_year, start_month, start_day
+        return start_year, start_month, start_day
