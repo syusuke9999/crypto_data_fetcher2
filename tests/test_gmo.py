@@ -7,6 +7,7 @@ from joblib import Memory
 
 memory_location = '/tmp/crypto_data_fetcher_test_gmo'
 
+
 class TestGmo(TestCase):
     def test_fetch_ohlcv(self):
         logger = logging.getLogger(__name__)
