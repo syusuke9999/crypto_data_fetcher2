@@ -97,16 +97,3 @@ class GmoFetcher:
         df = pd.concat(dfs)
         df.reset_index(inplace=True)  # インデックスをリセットしてtimestampを列に戻す
         return df
-
-    def _find_start_year_month(self, market):
-        today = datetime.datetime.now().date()
-        start_year = None
-        start_month = None
-        for year in range(2018, today.year + 1):
-            for month in range(1, 13):
-                url = f'https://api.coin.z.com/data/trades/{market}/{year}/{month:02}/'
-                if self._url_exists(url):
-                    start_year = year
-                    start_month = month
-                    return start_year, start_month
-        return start_year, start_month
