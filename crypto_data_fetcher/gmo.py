@@ -5,6 +5,7 @@ import pandas as pd
 import urllib.request
 import urllib.error
 from .utils import create_null_logger
+from tqdm import tqdm
 
 
 def url_exists(url):
@@ -60,15 +61,16 @@ class GmoFetcher:
             market = self.market
         return self.fetch_trades(market, interval_sec)
 
-    def fetch_trades(self, market, interval_sec, start_year=None, start_month=None):
+    def fetch_trades(self, market, interval_sec, start_year=None, start_month=None,start_day=None):
         today = datetime.datetime.now().date()
         if start_year is None:
             start_year = 2018
             start_month = 9
-        date = datetime.date(start_year, start_month, 1)
+            start_day = 5
+        date = datetime.date(start_year, start_month, start_day)
         dfs = []
         date_range = pd.date_range(start=date, end=today - datetime.timedelta(days=1), freq='D')
-        for date in date_range:
+        for date in tqdm(date_range):
             url = 'https://api.coin.z.com/data/trades/{}/{}/{:02}/{}{:02}{:02}_{}.csv.gz'.format(
                 market,
                 date.year,
