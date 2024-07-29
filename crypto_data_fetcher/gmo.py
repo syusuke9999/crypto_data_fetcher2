@@ -6,6 +6,7 @@ import urllib.request
 import urllib.error
 from .utils import create_null_logger
 
+
 def url_exists(url):
     try:
         time.sleep(1)
@@ -17,6 +18,7 @@ def url_exists(url):
     except Exception as e:
         print(f"Error: {str(e)} for URL: {url}")
     return False
+
 
 def url_read_csv(url):
     try:
@@ -35,6 +37,7 @@ def url_read_csv(url):
     except Exception as e:
         print(f"Error: {str(e)} for URL: {url}")
     return None
+
 
 class GmoFetcher:
     def __init__(self, market, logger=None, ccxt_client=None, memory=None):
@@ -57,9 +60,11 @@ class GmoFetcher:
             market = self.market
         return self.fetch_trades(market, interval_sec)
 
-    def fetch_trades(self, market, interval_sec):
+    def fetch_trades(self, market, interval_sec, start_year=None, start_month=None):
         today = datetime.datetime.now().date()
-        start_year, start_month = self._find_start_year_month(market)
+        if start_year is None:
+            start_year = 2018
+            start_month = 9
         date = datetime.date(start_year, start_month, 1)
         dfs = []
         date_range = pd.date_range(start=date, end=today - datetime.timedelta(days=1), freq='D')
@@ -105,5 +110,3 @@ class GmoFetcher:
                     start_month = month
                     return start_year, start_month
         return start_year, start_month
-
-
