@@ -82,18 +82,15 @@ class GmoFetcher:
             df = self._url_read_csv(url)
             if df is not None:
                 df['timestamp'] = pd.to_datetime(df['timestamp'])
-                df.set_index('timestamp', inplace=True)
+                df.set_index('timestamp', drop=True, inplace=True)
                 ohlcv = df.resample(f'{interval_sec}S').agg({
                     'price': ['first', 'max', 'min', 'last'],
                     'size': 'sum'
                 })
                 ohlcv.columns = ['op', 'hi', 'lo', 'cl', 'volume']  # 列名をリネーム
                 dfs.append(ohlcv)
-
         if len(dfs) == 0:
             self.logger.debug("No data found for the specified period and market.")
             return pd.DataFrame()
-
         df = pd.concat(dfs)
-        df.reset_index(inplace=True)  # インデックスをリセットしてtimestampを列に戻す
         return df
