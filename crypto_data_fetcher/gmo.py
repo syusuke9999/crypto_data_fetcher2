@@ -56,12 +56,12 @@ class GmoFetcher:
             url_read_csv_cached = memory.cache(url_read_csv)
             self._url_read_csv = url_read_csv_cached
 
-    def fetch_ohlcv(self, interval_sec=900, market=None):
+    def fetch_ohlcv(self, interval_sec=900, market=None, start_year=None, start_month=None,start_day=None):
         if market is None:
             market = self.market
-        return self.fetch_trades(market, interval_sec)
+        return self.fetch_trades(market, interval_sec,start_year, start_month,start_day)
 
-    def fetch_trades(self, market, interval_sec, start_year=None, start_month=None,start_day=None):
+    def fetch_trades(self, market, interval_sec, start_year, start_month,start_day):
         today = datetime.datetime.now().date()
         if start_year is None:
             start_year = 2018
